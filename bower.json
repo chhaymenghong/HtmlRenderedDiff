@@ -1,0 +1,17 @@
+{
+  "name": "HtmlRenderedDiff",
+  "description": "Generated a rendered diff of two html string",
+  "main": "dist/index.js",
+  "authors": [
+    "chhaymenghong <chhaymenghong@yahoo.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/chhaymenghong/VirtualDomAndTextDiff",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
