@@ -7472,20 +7472,9 @@ function patcher(patches) {
         return;
     }
 
-    allNodesRequiredToPatch = getNodesNeedPatching(patches);
-    let listOfPatches = [];
-    Object.entries(patches).filter(function (entry) {
-        return entry[0] !== 'a';
-    }).forEach(function (entry) {
-        let virtualPatch = entry[1];
-        if (virtualPatch.constructor === Array) {
-            virtualPatch.forEach(function (virtualPatch) {
-                listOfPatches.push(virtualPatch);
-            });
-        } else {
-            listOfPatches.push(virtualPatch);
-        }
-    });
+    let listOfPatches = getAllPatches(patches);
+    console.log(listOfPatches);
+    allNodesRequiredToPatch = getNodesNeedPatching(listOfPatches);
     let originalTree = patches['a'];
     listOfPatches.forEach(function (virtualPatch) {
         switch (virtualPatch.type) {
@@ -7734,10 +7723,10 @@ function hasFurtherChanges(nodeToPatch, allNodesRequiredToPatch) {
     }
 }
 
-/** Return a list of Nodes that need patching
- *      patches: an object containing all the patches {index: []/{}}
- * **/
-function getNodesNeedPatching(patches) {
+/**
+ * Extra patch object
+ */
+function getAllPatches(patches) {
     if (!patches || typeof patches !== 'object') {
         return [];
     }
@@ -7745,14 +7734,25 @@ function getNodesNeedPatching(patches) {
     Object.entries(patches).filter(function (entry) {
         return entry[0] !== 'a';
     }).forEach(function (entry) {
-        let virtualPatch = entry[1]; // this could be an array (case where propPatch follow by insertionPatch
+        let virtualPatch = entry[1]; // this could be an array (case where propPatch follow by multiple insertion patches
         if (virtualPatch.constructor === Array) {
-            results.push(virtualPatch[0].vNode, virtualPatch[1].vNode);
+            virtualPatch.forEach(function (patch) {
+                results.push(patch);
+            });
         } else {
-            results.push(virtualPatch.vNode);
+            results.push(virtualPatch);
         }
     });
     return results;
+}
+
+/** Return a list of Nodes that need patching
+ *      patches: an object containing all the patches {index: []/{}}
+ * **/
+function getNodesNeedPatching(patches) {
+    return patches.map(function (patch) {
+        return patch.vNode;
+    });
 }
 
 /** Wrap VirtualNode|VirtualText **/
