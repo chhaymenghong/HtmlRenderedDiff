@@ -2,8 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports =  {
     entry: {
-        index: path.resolve(__dirname, './index'),
-        test: path.resolve(__dirname, './unitTest')
+        index: path.resolve(__dirname, './index')
     },
 
     output: {

@@ -9,8 +9,10 @@
   "homepage": "https://github.com/chhaymenghong/VirtualDomAndTextDiff",
   "ignore": [
     "**/.*",
+    "**/*.js",
     "node_modules",
     "bower_components",
+    "images",
     "test",
     "tests"
   ]
