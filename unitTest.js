@@ -130,36 +130,27 @@ describe('Unit Test', function() {
     });
 
     describe('getNodesNeedPatching', function() {
-        it('should return empty array if the parameter is not valid', function () {
-            let result = HtmlRenderedDiff._getNodesNeedPatching(null);
-            expect(result.length === 0).toBeTruthy();
-            result = HtmlRenderedDiff._getNodesNeedPatching([]);
-            expect(result.length === 0).toBeTruthy();
-        });
         it('should return an array of nodes that needs patches', function() {
             let nodeNeedPatching1 = new VirtualText('node to patch');
             let nodeNeedPatching2 = new VirtualNode('p', {}, []);
             let nodeNeedPatching3 = new VirtualNode('div', {}, []);
-            let patches = {
-                0: {
+            let patches = [
+                {
                     type: VPATCH.VNODE,
                     vNode: nodeNeedPatching1,
                     patch: new VirtualNode('p', {}, [])
                 },
                 // there are cases where the value is an array( Properties Patch followed immediately by an insertion patch
-                1: [
-                    {
-                        type: VPATCH.PROPS,
-                        vNode: nodeNeedPatching2,
-                        patch: new VirtualNode('p', {'src': 'new src url'}, [])
-                    },
-                    {
-                        type: VPATCH.INSERT,
-                        vNode: nodeNeedPatching3,
-                        patch: new VirtualText('insert me')
-                    }
-                ]
-            };
+                {
+                    type: VPATCH.PROPS,
+                    vNode: nodeNeedPatching2,
+                    patch: new VirtualNode('p', {'src': 'new src url'}, [])
+                },
+                {
+                    type: VPATCH.INSERT,
+                    vNode: nodeNeedPatching3,
+                    patch: new VirtualText('insert me')
+                }];
 
             let result = HtmlRenderedDiff._getNodesNeedPatching(patches);
             expect(result.length === 3).toBeTruthy();
