@@ -162,7 +162,7 @@ function applyVPropPatchHelper(nodeToPatch, patchProperties, originalTree, allNo
     }
 }
 
-/** Insert Patch, We are only gonna wrap if nodeToInsert is a VText to avoid issue with table  **/
+/** Insert Patch. We are only gonna wrap if nodeToInsert is a VText to avoid issue with table  **/
 function applyInsertPatch(virtualPatch) {
     let nodeToInsert = virtualPatch.patch;
     let whereToInsert = virtualPatch.vNode;
@@ -180,13 +180,22 @@ function applyInsertPatch(virtualPatch) {
 
 }
 
-/** Remove this from sourceNode **/
+/** Remove this from sourceNode. We are only gonna wrap if nodeToInsert is a VText to avoid issue with table  **/
 function applyRemovePatch(virtualPatch, sourceNode) {
     let nodeToDelete = virtualPatch.vNode;
     let found = findNode(nodeToDelete, sourceNode);
     if (found) {
-        let wrapDeleteNode = new VirtualNode('SPAN', {attributes: {class: 'patcher-delete'}}, [nodeToDelete]);
-        found.foundIn.splice(found.at, 1, wrapDeleteNode);
+        if(IsVText(nodeToDelete)) {
+            let wrapDeleteNode = new VirtualNode('SPAN', {attributes: {class: 'patcher-delete'}}, [nodeToDelete]);
+            found.foundIn.splice(found.at, 1, wrapDeleteNode);
+        } else {
+            if (nodeToDelete.properties.attributes && nodeToDelete.properties.attributes.class) {
+                nodeToDelete.properties.attributes.class += ' patcher-delete';
+            } else {
+                nodeToDelete.properties.attributes.class = 'patcher-delete';
+            }
+            found.foundIn.splice(found.at, 1, nodeToDelete);
+        }
     }
 }
 

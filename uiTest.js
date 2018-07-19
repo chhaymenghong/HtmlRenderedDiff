@@ -65,6 +65,7 @@ function rullAllTest() {
     case12();
     case13();
     case14();
+    case15();
 }
 
 function writeHtml(fileName, originalHtml, modifiedHtml, diffResult) {
@@ -173,6 +174,12 @@ function case13() {
     let a = '<div><img src="' + Base64Img.base64Sync('./images/pic1.png')+ '"'+ '><div class="oldClass"><p>you can see me! I am john cena</p><span id="yolo1"><a href="https://google.com">welcome</a></span><h1>delete me</h1></div></div>';
     let b = '<div><img src="' + Base64Img.base64Sync('./images/pic2.png')+ '"'+ '><div class="newClass"><p>you bet I can see you!</p><span id="yolo2"><a href="https://youtube.com">welcome</a><h2>insert me</h2><p>sdfsdfsfs</p></span></div></div>';
     writeHtml('case13', a, b, HtmlRenderedDiff.generateDiff(a,b));
+}
+
+function case15() {
+    let a = '<table><tbody><tr><td>a</td><td>b</td></tr></tbody></table>';
+    let b = '<table><tbody><tr><td>a</td></tr></tbody></table>';
+    writeHtml('case15', a, b, HtmlRenderedDiff.generateDiff(a, b));
 }
 
 /** Data from VE **/
