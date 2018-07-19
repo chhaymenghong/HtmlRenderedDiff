@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 39);
+/******/ 	return __webpack_require__(__webpack_require__.s = 37);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -7321,111 +7321,22 @@ function done(stream, er, data) {
 /* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var version = __webpack_require__(3)
-
-module.exports = VirtualText
-
-function VirtualText(text) {
-    this.text = String(text)
-}
-
-VirtualText.prototype.version = version
-VirtualText.prototype.type = "VirtualText"
+"use strict";
 
 
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var version = __webpack_require__(3)
-var isVNode = __webpack_require__(4)
-var isWidget = __webpack_require__(9)
-var isThunk = __webpack_require__(10)
-var isVHook = __webpack_require__(22)
+var TextDiff = __webpack_require__(38);
+var VirtualDomDiff = __webpack_require__(41);
+var VirtualText = __webpack_require__(47);
+var VirtualNode = __webpack_require__(48);
+var IsVNode = __webpack_require__(4);
+var IsVText = __webpack_require__(8);
+var VPATCH = __webpack_require__(21);
+var ToHtml = __webpack_require__(49);
+var ToVNode = __webpack_require__(62)({ VNode: VirtualNode, VText: VirtualText });
 
-module.exports = VirtualNode
-
-var noProperties = {}
-var noChildren = []
-
-function VirtualNode(tagName, properties, children, key, namespace) {
-    this.tagName = tagName
-    this.properties = properties || noProperties
-    this.children = children || noChildren
-    this.key = key != null ? String(key) : undefined
-    this.namespace = (typeof namespace === "string") ? namespace : null
-
-    var count = (children && children.length) || 0
-    var descendants = 0
-    var hasWidgets = false
-    var hasThunks = false
-    var descendantHooks = false
-    var hooks
-
-    for (var propName in properties) {
-        if (properties.hasOwnProperty(propName)) {
-            var property = properties[propName]
-            if (isVHook(property) && property.unhook) {
-                if (!hooks) {
-                    hooks = {}
-                }
-
-                hooks[propName] = property
-            }
-        }
-    }
-
-    for (var i = 0; i < count; i++) {
-        var child = children[i]
-        if (isVNode(child)) {
-            descendants += child.count || 0
-
-            if (!hasWidgets && child.hasWidgets) {
-                hasWidgets = true
-            }
-
-            if (!hasThunks && child.hasThunks) {
-                hasThunks = true
-            }
-
-            if (!descendantHooks && (child.hooks || child.descendantHooks)) {
-                descendantHooks = true
-            }
-        } else if (!hasWidgets && isWidget(child)) {
-            if (typeof child.destroy === "function") {
-                hasWidgets = true
-            }
-        } else if (!hasThunks && isThunk(child)) {
-            hasThunks = true;
-        }
-    }
-
-    this.count = count + descendants
-    this.hasWidgets = hasWidgets
-    this.hasThunks = hasThunks
-    this.hooks = hooks
-    this.descendantHooks = descendantHooks
-}
-
-VirtualNode.prototype.version = version
-VirtualNode.prototype.type = "VirtualNode"
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const TextDiff = __webpack_require__(40);
-const VirtualDomDiff = __webpack_require__(43);
-const VirtualText = __webpack_require__(37);
-const VirtualNode = __webpack_require__(38);
-const IsVNode = __webpack_require__(4);
-const IsVText = __webpack_require__(8);
-const VPATCH = __webpack_require__(21);
-const ToHtml = __webpack_require__(49);
-const ToVNode = __webpack_require__(62)({ VNode: VirtualNode, VText: VirtualText });
-
-let api = {
+var api = {
     generateDiff: generateDiff,
     _findNode: findNode,
     _deepCopyProperties: deepCopyProperties,
@@ -7447,7 +7358,7 @@ if (true) {
     module.exports = api;
 }
 
-let allNodesRequiredToPatch = [];
+var allNodesRequiredToPatch = [];
 
 /**
  * Patches is an object with this format {'a': original tree, 0: virtualPatch or [virtualPatch..], 1: virtualPatch or [VirtualPatch...]}
@@ -7472,10 +7383,9 @@ function patcher(patches) {
         return;
     }
 
-    let listOfPatches = getAllPatches(patches);
-    console.log(listOfPatches);
+    var listOfPatches = getAllPatches(patches);
     allNodesRequiredToPatch = getNodesNeedPatching(listOfPatches);
-    let originalTree = patches['a'];
+    var originalTree = patches['a'];
     listOfPatches.forEach(function (virtualPatch) {
         switch (virtualPatch.type) {
             case VPATCH.VNODE:
@@ -7500,12 +7410,12 @@ function patcher(patches) {
 
 /** VirtualNode Patch ( against another VirtualNode|VirtualText )  **/
 function applyVNodePatch(virtualPatch, originalTree) {
-    let nodeToAdd = virtualPatch.patch; // this must be a VirtualNode
-    let nodeToRemove = virtualPatch.vNode; // this can be a VirtualNode or a VirtualText
-    let found = findNode(nodeToRemove, originalTree);
+    var nodeToAdd = virtualPatch.patch; // this must be a VirtualNode
+    var nodeToRemove = virtualPatch.vNode; // this can be a VirtualNode or a VirtualText
+    var found = findNode(nodeToRemove, originalTree);
     if (found) {
-        let wrapNodeToAdd = new VirtualNode('SPAN', { attributes: { class: 'patcher-replaceIn' } }, [nodeToAdd]);
-        let wrapNodeToRemove = new VirtualNode('SPAN', { attributes: { class: 'patcher-replaceOut' } }, [nodeToRemove]);
+        var wrapNodeToAdd = new VirtualNode('SPAN', { attributes: { class: 'patcher-replaceIn' } }, [nodeToAdd]);
+        var wrapNodeToRemove = new VirtualNode('SPAN', { attributes: { class: 'patcher-replaceOut' } }, [nodeToRemove]);
         found.foundIn.splice(found.at, 1, wrapNodeToAdd);
         found.foundIn.splice(found.at, 0, wrapNodeToRemove);
     } else {
@@ -7515,26 +7425,26 @@ function applyVNodePatch(virtualPatch, originalTree) {
 
 /** VirtualText Patch (against another VirtualNode|VirtualText **/
 function applyVTextPatch(virtualPatch, originalTree) {
-    let nodeToAdd = virtualPatch.patch;
-    let nodeToRemove = virtualPatch.vNode;
-    let found = findNode(nodeToRemove, originalTree);
+    var nodeToAdd = virtualPatch.patch;
+    var nodeToRemove = virtualPatch.vNode;
+    var found = findNode(nodeToRemove, originalTree);
     if (found) {
         if (IsVNode(nodeToRemove)) {
-            let wrapNodeToAdd = createWrapper('SPAN', 'patcher-replaceIn', [nodeToAdd]);
-            let wrapNodeToRemove = createWrapper('SPAN', 'patcher-replaceOut', [nodeToRemove]);
+            var wrapNodeToAdd = createWrapper('SPAN', 'patcher-replaceIn', [nodeToAdd]);
+            var wrapNodeToRemove = createWrapper('SPAN', 'patcher-replaceOut', [nodeToRemove]);
             found.foundIn.splice(found.at, 1, wrapNodeToAdd);
             found.foundIn.splice(found.at, 0, wrapNodeToRemove);
         } else if (IsVText(nodeToRemove)) {
             // text-diff
-            let diffResults = TextDiff.diffWords(nodeToRemove.text, nodeToAdd.text);
+            var diffResults = TextDiff.diffWords(nodeToRemove.text, nodeToAdd.text);
             if (diffResults.length > 0) {
-                let childNodes = [];
+                var childNodes = [];
                 diffResults.forEach(function (result) {
-                    let className = result.added ? 'patcher-text-insertion' : result.removed ? 'patcher-text-deletion' : 'patcher-text-same';
+                    var className = result.added ? 'patcher-text-insertion' : result.removed ? 'patcher-text-deletion' : 'patcher-text-same';
                     childNodes.push(createWrapper('SPAN', className, [new VirtualText(result.value)]));
                 });
 
-                let topWrapper = createWrapper('SPAN', 'patcher-text-diff', childNodes);
+                var topWrapper = createWrapper('SPAN', 'patcher-text-diff', childNodes);
                 found.foundIn.splice(found.at, 1, topWrapper);
             }
         }
@@ -7545,28 +7455,28 @@ function applyVTextPatch(virtualPatch, originalTree) {
 
 /** VirtualProps Patch **/
 function applyVPropsPatch(virtualPatch, originalTree, allNodesRequiredToPatch) {
-    let nodeToPatch = virtualPatch.vNode;
-    let patchProperties = virtualPatch.patch;
+    var nodeToPatch = virtualPatch.vNode;
+    var patchProperties = virtualPatch.patch;
     applyVPropPatchHelper(nodeToPatch, patchProperties, originalTree, allNodesRequiredToPatch);
 }
 
 /** Helper function for applying property updates to VirtualNode. Only generate wrapper node to show
  * diff if an only if there are no other patches for nodeToPatch or its descendants **/
 function applyVPropPatchHelper(nodeToPatch, patchProperties, originalTree, allNodesRequiredToPatch) {
-    const containPropWeCare = containsAllowedProps(patchProperties);
-    const affectedByOtherPatches = hasFurtherChanges(nodeToPatch, allNodesRequiredToPatch);
+    var containPropWeCare = containsAllowedProps(patchProperties);
+    var affectedByOtherPatches = hasFurtherChanges(nodeToPatch, allNodesRequiredToPatch);
     if (containPropWeCare && !affectedByOtherPatches) {
-        let cloneOfNodeToPatch = new VirtualNode(nodeToPatch.tagName, {}, nodeToPatch.children);
+        var cloneOfNodeToPatch = new VirtualNode(nodeToPatch.tagName, {}, nodeToPatch.children);
         deepCopyProperties(nodeToPatch.properties, cloneOfNodeToPatch.properties);
         deepCopyProperties(patchProperties, nodeToPatch.properties);
 
-        let wrapBefore = createWrapper('SPAN', 'patcher-attribute-replace-out', [cloneOfNodeToPatch]);
-        let wrapAfter = createWrapper('SPAN', 'patcher-attribute-replace-in', [nodeToPatch]);
-        let found = findNode(nodeToPatch, originalTree);
+        var wrapBefore = createWrapper('SPAN', 'patcher-attribute-replace-out', [cloneOfNodeToPatch]);
+        var wrapAfter = createWrapper('SPAN', 'patcher-attribute-replace-in', [nodeToPatch]);
+        var found = findNode(nodeToPatch, originalTree);
         if (found) {
             // add it
-            let foundIn = found.foundIn;
-            let at = found.at;
+            var foundIn = found.foundIn;
+            var at = found.at;
             foundIn.splice(at, 1, wrapAfter);
             foundIn.splice(at, 0, wrapBefore);
         } else {
@@ -7580,8 +7490,8 @@ function applyVPropPatchHelper(nodeToPatch, patchProperties, originalTree, allNo
 
 /** Insert Patch, We are only gonna wrap if nodeToInsert is a VText to avoid issue with table  **/
 function applyInsertPatch(virtualPatch) {
-    let nodeToInsert = virtualPatch.patch;
-    let whereToInsert = virtualPatch.vNode;
+    var nodeToInsert = virtualPatch.patch;
+    var whereToInsert = virtualPatch.vNode;
     if (IsVText(nodeToInsert)) {
         whereToInsert.children.push(new VirtualNode('SPAN', { attributes: { class: 'patcher-insert' } }, [nodeToInsert]));
     } else if (IsVNode(nodeToInsert)) {
@@ -7597,10 +7507,10 @@ function applyInsertPatch(virtualPatch) {
 
 /** Remove this from sourceNode **/
 function applyRemovePatch(virtualPatch, sourceNode) {
-    let nodeToDelete = virtualPatch.vNode;
-    let found = findNode(nodeToDelete, sourceNode);
+    var nodeToDelete = virtualPatch.vNode;
+    var found = findNode(nodeToDelete, sourceNode);
     if (found) {
-        let wrapDeleteNode = new VirtualNode('SPAN', { attributes: { class: 'patcher-delete' } }, [nodeToDelete]);
+        var wrapDeleteNode = new VirtualNode('SPAN', { attributes: { class: 'patcher-delete' } }, [nodeToDelete]);
         found.foundIn.splice(found.at, 1, wrapDeleteNode);
     }
 }
@@ -7621,19 +7531,19 @@ function findNode(nodeToFind, sourceNode) {
         if (IsVText(sourceNode)) {
             return false;
         }
-        let children = sourceNode.children;
+        var children = sourceNode.children;
         // Look at child level
-        for (let i = 0; i < children.length; i++) {
-            let childNode = children[i];
+        for (var i = 0; i < children.length; i++) {
+            var childNode = children[i];
             if (nodeToFind === childNode) {
                 return { foundIn: children, at: i };
             }
         }
 
         // look at descendants
-        for (let i = 0; i < children.length; i++) {
-            let childNode = children[i];
-            let found = helper(nodeToFind, childNode);
+        for (var _i = 0; _i < children.length; _i++) {
+            var _childNode = children[_i];
+            var found = helper(nodeToFind, _childNode);
             if (found) {
                 return found;
             }
@@ -7648,15 +7558,15 @@ function findNode(nodeToFind, sourceNode) {
  *      Return true, if successful. False if either parameter is not an object
  * **/
 function deepCopyProperties(fromHere, toHere) {
-    if (typeof fromHere !== 'object' || typeof toHere !== 'object' || fromHere === null || toHere === null) {
+    if ((typeof fromHere === 'undefined' ? 'undefined' : _typeof(fromHere)) !== 'object' || (typeof toHere === 'undefined' ? 'undefined' : _typeof(toHere)) !== 'object' || fromHere === null || toHere === null) {
         return false;
     }
     Object.entries(fromHere).forEach(function (entry) {
-        let key = entry[0];
-        let value = entry[1];
+        var key = entry[0];
+        var value = entry[1];
         if (typeof value === 'string') {
             toHere[key] = value;
-        } else if (typeof value === 'object') {
+        } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
             toHere[key] = {};
             deepCopyProperties(value, toHere[key]);
         }
@@ -7671,15 +7581,15 @@ function deepCopyProperties(fromHere, toHere) {
  *      (style, src, href, class (under attributes)
  * **/
 function containsAllowedProps(properties) {
-    if (properties === null || typeof properties !== 'object') {
+    if (properties === null || (typeof properties === 'undefined' ? 'undefined' : _typeof(properties)) !== 'object') {
         return false;
     }
     return Object.entries(properties).some(function (property) {
-        let key = property[0];
-        let value = property[1];
+        var key = property[0];
+        var value = property[1];
         if (typeof value === 'string') {
             return key === 'style' || key === 'src' || key === 'href';
-        } else if (typeof value === 'object' && key === 'attributes') {
+        } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && key === 'attributes') {
             return 'class' in properties.attributes;
         }
     });
@@ -7700,8 +7610,8 @@ function hasFurtherChanges(nodeToPatch, allNodesRequiredToPatch) {
             return false;
         }
         // check at child level
-        let isAffected = nodeToPatch.children.some(function (childNode) {
-            let isAffected = allNodesRequiredToPatch.some(function (nodeNeedPatching) {
+        var isAffected = nodeToPatch.children.some(function (childNode) {
+            var isAffected = allNodesRequiredToPatch.some(function (nodeNeedPatching) {
                 return nodeNeedPatching === childNode;
             });
             if (isAffected) {
@@ -7714,7 +7624,7 @@ function hasFurtherChanges(nodeToPatch, allNodesRequiredToPatch) {
         }
         // check at next level
         isAffected = nodeToPatch.children.some(function (childNode) {
-            let isAffected = helper(childNode);
+            var isAffected = helper(childNode);
             if (isAffected) {
                 return true;
             }
@@ -7727,14 +7637,14 @@ function hasFurtherChanges(nodeToPatch, allNodesRequiredToPatch) {
  * Extra patch object
  */
 function getAllPatches(patches) {
-    if (!patches || typeof patches !== 'object') {
+    if (!patches || (typeof patches === 'undefined' ? 'undefined' : _typeof(patches)) !== 'object') {
         return [];
     }
-    let results = [];
+    var results = [];
     Object.entries(patches).filter(function (entry) {
         return entry[0] !== 'a';
     }).forEach(function (entry) {
-        let virtualPatch = entry[1]; // this could be an array (case where propPatch follow by multiple insertion patches
+        var virtualPatch = entry[1]; // this could be an array (case where propPatch follow by multiple insertion patches
         if (virtualPatch.constructor === Array) {
             virtualPatch.forEach(function (patch) {
                 results.push(patch);
@@ -7764,13 +7674,13 @@ function generateDiff(originalHtml, modifiedHtml) {
     // we need to wrap both parameter in a the same tag to avoid change at the root level
     originalHtml = '<span>' + originalHtml + '</span>';
     modifiedHtml = '<span>' + modifiedHtml + '</span>';
-    let patches = VirtualDomDiff(ToVNode(originalHtml), ToVNode(modifiedHtml));
-    let result = patcher(patches);
+    var patches = VirtualDomDiff(ToVNode(originalHtml), ToVNode(modifiedHtml));
+    var result = patcher(patches);
     return ToHtml(result);
 }
 
 /***/ }),
-/* 40 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7781,11 +7691,11 @@ exports.wordDiff = undefined;
 exports. /*istanbul ignore end*/diffWords = diffWords;
 /*istanbul ignore start*/exports. /*istanbul ignore end*/diffWordsWithSpace = diffWordsWithSpace;
 
-var /*istanbul ignore start*/_base = __webpack_require__(41) /*istanbul ignore end*/;
+var /*istanbul ignore start*/_base = __webpack_require__(39) /*istanbul ignore end*/;
 
 /*istanbul ignore start*/var _base2 = _interopRequireDefault(_base);
 
-/*istanbul ignore end*/var /*istanbul ignore start*/_params = __webpack_require__(42) /*istanbul ignore end*/;
+/*istanbul ignore end*/var /*istanbul ignore start*/_params = __webpack_require__(40) /*istanbul ignore end*/;
 
 /*istanbul ignore start*/function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -7847,7 +7757,7 @@ function diffWordsWithSpace(oldStr, newStr, options) {
 
 
 /***/ }),
-/* 41 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8089,7 +7999,7 @@ function clonePath(path) {
 
 
 /***/ }),
-/* 42 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8114,28 +8024,28 @@ function generateOptions(options, defaults) {
 
 
 /***/ }),
-/* 43 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var diff = __webpack_require__(44)
+var diff = __webpack_require__(42)
 
 module.exports = diff
 
 
 /***/ }),
-/* 44 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(45)
+var isArray = __webpack_require__(43)
 
 var VPatch = __webpack_require__(21)
 var isVNode = __webpack_require__(4)
 var isVText = __webpack_require__(8)
 var isWidget = __webpack_require__(9)
 var isThunk = __webpack_require__(10)
-var handleThunk = __webpack_require__(46)
+var handleThunk = __webpack_require__(44)
 
-var diffProps = __webpack_require__(47)
+var diffProps = __webpack_require__(45)
 
 module.exports = diff
 
@@ -8556,7 +8466,7 @@ function appendPatch(apply, patch) {
 
 
 /***/ }),
-/* 45 */
+/* 43 */
 /***/ (function(module, exports) {
 
 var nativeIsArray = Array.isArray
@@ -8570,7 +8480,7 @@ function isArray(obj) {
 
 
 /***/ }),
-/* 46 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isVNode = __webpack_require__(4)
@@ -8616,10 +8526,10 @@ function renderThunk(thunk, previous) {
 
 
 /***/ }),
-/* 47 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(48)
+var isObject = __webpack_require__(46)
 var isHook = __webpack_require__(22)
 
 module.exports = diffProps
@@ -8680,7 +8590,7 @@ function getPrototype(value) {
 
 
 /***/ }),
-/* 48 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8689,6 +8599,100 @@ function getPrototype(value) {
 module.exports = function isObject(x) {
 	return typeof x === "object" && x !== null;
 };
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var version = __webpack_require__(3)
+
+module.exports = VirtualText
+
+function VirtualText(text) {
+    this.text = String(text)
+}
+
+VirtualText.prototype.version = version
+VirtualText.prototype.type = "VirtualText"
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var version = __webpack_require__(3)
+var isVNode = __webpack_require__(4)
+var isWidget = __webpack_require__(9)
+var isThunk = __webpack_require__(10)
+var isVHook = __webpack_require__(22)
+
+module.exports = VirtualNode
+
+var noProperties = {}
+var noChildren = []
+
+function VirtualNode(tagName, properties, children, key, namespace) {
+    this.tagName = tagName
+    this.properties = properties || noProperties
+    this.children = children || noChildren
+    this.key = key != null ? String(key) : undefined
+    this.namespace = (typeof namespace === "string") ? namespace : null
+
+    var count = (children && children.length) || 0
+    var descendants = 0
+    var hasWidgets = false
+    var hasThunks = false
+    var descendantHooks = false
+    var hooks
+
+    for (var propName in properties) {
+        if (properties.hasOwnProperty(propName)) {
+            var property = properties[propName]
+            if (isVHook(property) && property.unhook) {
+                if (!hooks) {
+                    hooks = {}
+                }
+
+                hooks[propName] = property
+            }
+        }
+    }
+
+    for (var i = 0; i < count; i++) {
+        var child = children[i]
+        if (isVNode(child)) {
+            descendants += child.count || 0
+
+            if (!hasWidgets && child.hasWidgets) {
+                hasWidgets = true
+            }
+
+            if (!hasThunks && child.hasThunks) {
+                hasThunks = true
+            }
+
+            if (!descendantHooks && (child.hooks || child.descendantHooks)) {
+                descendantHooks = true
+            }
+        } else if (!hasWidgets && isWidget(child)) {
+            if (typeof child.destroy === "function") {
+                hasWidgets = true
+            }
+        } else if (!hasThunks && isThunk(child)) {
+            hasThunks = true;
+        }
+    }
+
+    this.count = count + descendants
+    this.hasWidgets = hasWidgets
+    this.hasThunks = hasThunks
+    this.hooks = hooks
+    this.descendantHooks = descendantHooks
+}
+
+VirtualNode.prototype.version = version
+VirtualNode.prototype.type = "VirtualNode"
 
 
 /***/ }),
