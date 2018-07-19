@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 39);
+/******/ 	return __webpack_require__(__webpack_require__.s = 37);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -7321,104 +7321,10 @@ function done(stream, er, data) {
 /* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var version = __webpack_require__(3)
-
-module.exports = VirtualText
-
-function VirtualText(text) {
-    this.text = String(text)
-}
-
-VirtualText.prototype.version = version
-VirtualText.prototype.type = "VirtualText"
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var version = __webpack_require__(3)
-var isVNode = __webpack_require__(4)
-var isWidget = __webpack_require__(9)
-var isThunk = __webpack_require__(10)
-var isVHook = __webpack_require__(22)
-
-module.exports = VirtualNode
-
-var noProperties = {}
-var noChildren = []
-
-function VirtualNode(tagName, properties, children, key, namespace) {
-    this.tagName = tagName
-    this.properties = properties || noProperties
-    this.children = children || noChildren
-    this.key = key != null ? String(key) : undefined
-    this.namespace = (typeof namespace === "string") ? namespace : null
-
-    var count = (children && children.length) || 0
-    var descendants = 0
-    var hasWidgets = false
-    var hasThunks = false
-    var descendantHooks = false
-    var hooks
-
-    for (var propName in properties) {
-        if (properties.hasOwnProperty(propName)) {
-            var property = properties[propName]
-            if (isVHook(property) && property.unhook) {
-                if (!hooks) {
-                    hooks = {}
-                }
-
-                hooks[propName] = property
-            }
-        }
-    }
-
-    for (var i = 0; i < count; i++) {
-        var child = children[i]
-        if (isVNode(child)) {
-            descendants += child.count || 0
-
-            if (!hasWidgets && child.hasWidgets) {
-                hasWidgets = true
-            }
-
-            if (!hasThunks && child.hasThunks) {
-                hasThunks = true
-            }
-
-            if (!descendantHooks && (child.hooks || child.descendantHooks)) {
-                descendantHooks = true
-            }
-        } else if (!hasWidgets && isWidget(child)) {
-            if (typeof child.destroy === "function") {
-                hasWidgets = true
-            }
-        } else if (!hasThunks && isThunk(child)) {
-            hasThunks = true;
-        }
-    }
-
-    this.count = count + descendants
-    this.hasWidgets = hasWidgets
-    this.hasThunks = hasThunks
-    this.hooks = hooks
-    this.descendantHooks = descendantHooks
-}
-
-VirtualNode.prototype.version = version
-VirtualNode.prototype.type = "VirtualNode"
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const TextDiff = __webpack_require__(40);
-const VirtualDomDiff = __webpack_require__(43);
-const VirtualText = __webpack_require__(37);
-const VirtualNode = __webpack_require__(38);
+const TextDiff = __webpack_require__(38);
+const VirtualDomDiff = __webpack_require__(41);
+const VirtualText = __webpack_require__(47);
+const VirtualNode = __webpack_require__(48);
 const IsVNode = __webpack_require__(4);
 const IsVText = __webpack_require__(8);
 const VPATCH = __webpack_require__(21);
@@ -7473,7 +7379,6 @@ function patcher(patches) {
     }
 
     let listOfPatches = getAllPatches(patches);
-    console.log(listOfPatches);
     allNodesRequiredToPatch = getNodesNeedPatching(listOfPatches);
     let originalTree = patches['a'];
     listOfPatches.forEach(function (virtualPatch) {
@@ -7770,7 +7675,7 @@ function generateDiff(originalHtml, modifiedHtml) {
 }
 
 /***/ }),
-/* 40 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7781,11 +7686,11 @@ exports.wordDiff = undefined;
 exports. /*istanbul ignore end*/diffWords = diffWords;
 /*istanbul ignore start*/exports. /*istanbul ignore end*/diffWordsWithSpace = diffWordsWithSpace;
 
-var /*istanbul ignore start*/_base = __webpack_require__(41) /*istanbul ignore end*/;
+var /*istanbul ignore start*/_base = __webpack_require__(39) /*istanbul ignore end*/;
 
 /*istanbul ignore start*/var _base2 = _interopRequireDefault(_base);
 
-/*istanbul ignore end*/var /*istanbul ignore start*/_params = __webpack_require__(42) /*istanbul ignore end*/;
+/*istanbul ignore end*/var /*istanbul ignore start*/_params = __webpack_require__(40) /*istanbul ignore end*/;
 
 /*istanbul ignore start*/function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -7847,7 +7752,7 @@ function diffWordsWithSpace(oldStr, newStr, options) {
 
 
 /***/ }),
-/* 41 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8089,7 +7994,7 @@ function clonePath(path) {
 
 
 /***/ }),
-/* 42 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8114,28 +8019,28 @@ function generateOptions(options, defaults) {
 
 
 /***/ }),
-/* 43 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var diff = __webpack_require__(44)
+var diff = __webpack_require__(42)
 
 module.exports = diff
 
 
 /***/ }),
-/* 44 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isArray = __webpack_require__(45)
+var isArray = __webpack_require__(43)
 
 var VPatch = __webpack_require__(21)
 var isVNode = __webpack_require__(4)
 var isVText = __webpack_require__(8)
 var isWidget = __webpack_require__(9)
 var isThunk = __webpack_require__(10)
-var handleThunk = __webpack_require__(46)
+var handleThunk = __webpack_require__(44)
 
-var diffProps = __webpack_require__(47)
+var diffProps = __webpack_require__(45)
 
 module.exports = diff
 
@@ -8556,7 +8461,7 @@ function appendPatch(apply, patch) {
 
 
 /***/ }),
-/* 45 */
+/* 43 */
 /***/ (function(module, exports) {
 
 var nativeIsArray = Array.isArray
@@ -8570,7 +8475,7 @@ function isArray(obj) {
 
 
 /***/ }),
-/* 46 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isVNode = __webpack_require__(4)
@@ -8616,10 +8521,10 @@ function renderThunk(thunk, previous) {
 
 
 /***/ }),
-/* 47 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isObject = __webpack_require__(48)
+var isObject = __webpack_require__(46)
 var isHook = __webpack_require__(22)
 
 module.exports = diffProps
@@ -8680,7 +8585,7 @@ function getPrototype(value) {
 
 
 /***/ }),
-/* 48 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8689,6 +8594,100 @@ function getPrototype(value) {
 module.exports = function isObject(x) {
 	return typeof x === "object" && x !== null;
 };
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var version = __webpack_require__(3)
+
+module.exports = VirtualText
+
+function VirtualText(text) {
+    this.text = String(text)
+}
+
+VirtualText.prototype.version = version
+VirtualText.prototype.type = "VirtualText"
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var version = __webpack_require__(3)
+var isVNode = __webpack_require__(4)
+var isWidget = __webpack_require__(9)
+var isThunk = __webpack_require__(10)
+var isVHook = __webpack_require__(22)
+
+module.exports = VirtualNode
+
+var noProperties = {}
+var noChildren = []
+
+function VirtualNode(tagName, properties, children, key, namespace) {
+    this.tagName = tagName
+    this.properties = properties || noProperties
+    this.children = children || noChildren
+    this.key = key != null ? String(key) : undefined
+    this.namespace = (typeof namespace === "string") ? namespace : null
+
+    var count = (children && children.length) || 0
+    var descendants = 0
+    var hasWidgets = false
+    var hasThunks = false
+    var descendantHooks = false
+    var hooks
+
+    for (var propName in properties) {
+        if (properties.hasOwnProperty(propName)) {
+            var property = properties[propName]
+            if (isVHook(property) && property.unhook) {
+                if (!hooks) {
+                    hooks = {}
+                }
+
+                hooks[propName] = property
+            }
+        }
+    }
+
+    for (var i = 0; i < count; i++) {
+        var child = children[i]
+        if (isVNode(child)) {
+            descendants += child.count || 0
+
+            if (!hasWidgets && child.hasWidgets) {
+                hasWidgets = true
+            }
+
+            if (!hasThunks && child.hasThunks) {
+                hasThunks = true
+            }
+
+            if (!descendantHooks && (child.hooks || child.descendantHooks)) {
+                descendantHooks = true
+            }
+        } else if (!hasWidgets && isWidget(child)) {
+            if (typeof child.destroy === "function") {
+                hasWidgets = true
+            }
+        } else if (!hasThunks && isThunk(child)) {
+            hasThunks = true;
+        }
+    }
+
+    this.count = count + descendants
+    this.hasWidgets = hasWidgets
+    this.hasThunks = hasThunks
+    this.hooks = hooks
+    this.descendantHooks = descendantHooks
+}
+
+VirtualNode.prototype.version = version
+VirtualNode.prototype.type = "VirtualNode"
 
 
 /***/ }),
